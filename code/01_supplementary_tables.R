@@ -24,7 +24,9 @@ source(here::here("code", "00_setup.R"))
 cleaned_qa_list <- get_qa_data(qa.path)
 
 # check QA workbook includes all required variables
-length(names(cleaned_qa_list)) == length(lookup_df$vname)
+# in not character(0), check if set_up script includes 
+# all required variables
+setdiff(names(cleaned_qa_list), lookup_df$vname)
 
 ### 2 - Import CI files ----
 

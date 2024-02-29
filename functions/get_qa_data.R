@@ -48,7 +48,10 @@ get_qa_data <- function(path) {
       select(1:2, Sum:N) %>%
       
       # rename 2nd and 3rd columns
-      rename_with(~ c('category', "Weighted N"), c(2, 3))
+      rename_with(~ c('category', "Weighted N"), c(2, 3)) %>%
+      
+      # remove unwanted * (see below for explanation)
+      mutate(category = gsub("\\*+","", category))
     
     # remove unwanted * in variables 
     # (* was previously used for footnotes but is no longer needed)
