@@ -36,10 +36,16 @@ files <- list.files(path = ci.path,
                     ignore.case = TRUE)
 files
 
+# view files that have CI sheets but are not included in lookup_df
+# update look_df where appropriate
+files[!grepl(paste(lookup_df$vname,
+                            collapse = "|"), 
+                      tolower(files))]
+
 # select files that include the data needed for final output 
 # (i.e., file names that include variables mentioned in the 
 # lookup table)
-files <- files[grepl(paste(lookup_df$vname, 
+files <- files[grepl(paste(lookup_df$vname,
                            collapse = "|"), 
                      tolower(files))]
 

@@ -21,7 +21,7 @@ sscq_year <- "2022"
 ### 2 - File name of supplementary tables - TO UPDATE ----
 
 # name of final file
-fname <- "all.xlsx"
+fname <- "supplementary_tables.xlsx"
 
 ### 3 - Cover sheet - TO UPDATE ----
 
@@ -103,8 +103,8 @@ lookup_df <- data.frame(rbind(
   c("PolConB", "Confidence in Police to Respond Quickly to Appropriate Calls and Information from the Public (Grouped)", "Police Confidence B Grouped"),
   c("PolConC_F", "Confidence in Police to Deal with Incidents as they Occur (All Categories)", "Police Confidence C"),
   c("PolConC", "Confidence in Police to Deal with Incidents as they Occur (Grouped)", "Police Confidence C Grouped"),
-  c("PolConD_F", "Confidence in Police to Investiagte Incidents after they Occur (All Categories)", "Police Confidence D"),
-  c("PolConD", "Confidence in Police to Investiagte Incidents after they Occur (Grouped)", "Police Confidence D Grouped"),
+  c("PolConD_F", "Confidence in Police to Investigate Incidents after they Occur (All Categories)", "Police Confidence D"),
+  c("PolConD", "Confidence in Police to Investigate Incidents after they Occur (Grouped)", "Police Confidence D Grouped"),
   c("PolConE_F", "Confidence in Police to Solve Crimes (All Categories)", "Police Confidence E"),
   c("PolConE", "Confidence in Police to Solve Crimes (Grouped)", "Police Confidence E Grouped"),
   c("PolConF_F", "Confidence in Police to Catch Criminals (All Categories)", "Police Confidence F"),
@@ -112,10 +112,11 @@ lookup_df <- data.frame(rbind(
   c("htype2a", "Household Type", "Household Type"),
   c("outten", "Detailed Tenure", "Tenure"),
   c("CarAccess", "Car Access", "Car Access"),
-  c("BirthCountryEU", "Country of Birth", "Country of Birth"),
+  c("cobeu17", "Country of Birth", "Country of Birth"),
   c("ethSuperGroup", "Ethnic Group", "Ethnic Group"),
   c("religionB", "Religion", "Religion"),
   c("sexIDg", "Sexual Orientation", "Sexual Orienation"),
+  c("asg", "Respondent Age and Sex", "Age and Sex"),
   c("ageG", "Respondent Age", "Age"),
   c("marStatB", "Marital Status", "Marital Status"),
   c("sex", "Respondent Sex", "Sex"),
@@ -144,6 +145,20 @@ f_trans_factor <- function(x) {
     x == "ageG5"       ~ "55-64",
     x == "ageG6"       ~ "65-74",
     x == "ageG7"      ~ "75+",
+    x == "asg1" ~ "Female 16-24",
+    x == "asg2" ~ "Female 25-34",
+    x == "asg3" ~ "Female 35-44",
+    x == "asg4" ~ "Female 45-54",
+    x == "asg5" ~ "Female 55-64",
+    x == "asg6" ~ "Female 65-74",
+    x == "asg7" ~ "Female 75+",
+    x == "asg8" ~ "Male 16-24",
+    x == "asg9" ~ "Male 25-34",
+    x == "asg10" ~ "Male 35-44",
+    x == "asg11" ~ "Male 45-54",
+    x == "asg12" ~ "Male 55-64",
+    x == "asg13" ~ "Male 65-74",
+    x == "asg14" ~ "Male 75+",
     x == "LTCondition1" ~ "Limiting condition",
     x == "LTCondition2" ~ "No limiting condition",
     x == "smoking1" ~ "Yes",
@@ -210,10 +225,10 @@ f_trans_factor <- function(x) {
     x == "CarAccess2" ~ "2 cars",
     x == "CarAccess3" ~ "3 cars",
     x == "CarAccess4" ~ "4 cars",
-    x == "BirthCountryEU1" ~ "Scotland",
-    x == "BirthCountryEU2" ~ "Rest of UK",
-    x == "BirthCountryEU3" ~ "Rest of EU",
-    x == "BirthCountryEU4" ~ "Rest of World",
+    x == "cobeu171" ~ "Scotland",
+    x == "cobeu172" ~ "Rest of UK",
+    x == "cobeu173" ~ "Rest of EU",
+    x == "cobeu174" ~ "Rest of World",
     x == "ethSuperGroup1" ~ "White: Scottish",
     x == "ethSuperGroup2" ~ "White: Other British",
     x == "ethSuperGroup3" ~ "White: Polish",
@@ -260,9 +275,9 @@ f_trans_factor <- function(x) {
 ### 7 - Required variables - TO UPDATE ----
 
 # variable names to be included in each sheet (as rows)
-levels <- c("all", "simdq", "urbrurcode", "la", "healthboard", 
+levels <- c("all", "simd20q", "urbrur16code", "la", "healthboard", 
             "htype2a", "outten", "caraccess",
-            "birthcountryeu", "ethsupergroup", "religionb", 
+            "cobeu17", "ethsupergroup", "religionb", 
             "sexidg", "asg", "ageg",
             "marstatb", "topqual", "iloemp", 
             "ltcondition", "smoking", "indcare", "psd")

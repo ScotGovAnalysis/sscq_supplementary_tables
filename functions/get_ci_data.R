@@ -16,7 +16,7 @@ get_ci_data <- function(paths){
   
   # loop through file names
   ci_tables_list <- list()
-  for (a in seq_along(paths[1:2])) {
+  for (a in seq_along(paths)) {
     
     # get path of one file
     path <- paths[a]
@@ -26,7 +26,7 @@ get_ci_data <- function(paths){
     
     # import all but the first sheet of filename a and add to list
     mylist <- lapply(excel_sheets(path)[-1], read_excel, 
-                     path = path, skip = 4, col_names = FALSE)
+                     path = path, skip = 10, col_names = FALSE)
     
     # add sheet names as list names
     names(mylist) <- sheetnames
@@ -42,6 +42,9 @@ get_ci_data <- function(paths){
       split_table <- mylist[[i]] %>%
         split_df(complexity = 1)
       
+      # remove tibbles with only one row
+      split_table <- split_table[purrr::map_lgl(split_table, ~ nrow(.) != 1)]
+      
       # assign name to list item, remove first two rows and
       # select relevant columns
       split_table <- lapply(split_table, function(w){
@@ -51,6 +54,12 @@ get_ci_data <- function(paths){
         return(w)
       }
       )
+      
+      split_table[[1]] <- split_table[[1]] %>%
+        `colnames<-` (c(colnames(split_table[[2]])[2:6], "All")) %>%
+        mutate(All = "All",
+               `NA` = as.double(`NA`)) %>%
+        select(c(6, 1:5))
       
       # assign name to second column in first list item
       colnames(split_table[[1]])[2] <- "Variable"
@@ -65,14 +74,13 @@ get_ci_data <- function(paths){
         return(k)
       })
       
-      split_table
-      
       # combine all list items into one data frame
       df <- bind_rows(split_table, .id = "category")
       
       # remove trailing digits from value in first row
       # second column
-      var <- gsub("[[:digit:]]$", "", df[1,2]) %>% tolower()
+      var <- gsub("[[:digit:]]*$", "", df[1,3]) %>% tolower()
+      var <- ifelse(var == "cobeu", "cobeu17", var)
       
       # remove * from values in Category column
       # (notes were previously indicated with * but this is no
@@ -171,7 +179,7 @@ get_ci_data <- function(paths){
       
     }
     
-    # merge common columns nad uniqe columns to data frame
+    # merge common columns and unique columns to data frame
     ci_tables <- do.call("cbind", list(col, ci_list))
     
     # reorder columns
