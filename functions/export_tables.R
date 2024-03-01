@@ -103,7 +103,9 @@ export_tables <- function(data) {
   openxlsx::openXL(my_wb)
   
   # export to xlsx file
-  openxlsx::saveWorkbook(my_wb, paste0(export.path,
-                                       fname))
+  openxlsx::saveWorkbook(my_wb, 
+                         paste0(export.path,
+                                       fname),
+                         overwrite = TRUE)
   
 }

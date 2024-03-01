@@ -3,7 +3,7 @@
 #' @description This function reads in the QA Excel file, 
 #' loops through the different sheets and cleans the data.
 #'
-#' @param path Path to folder containing the QA sheet 
+#' @param filepath Path to folder containing the QA sheet 
 #' outputted by SAS.
 #'
 #' @returns Cleaned list of tibbles containing QA data.
@@ -11,7 +11,9 @@
 #' @examples
 #' get_qa_data(qa.path)
 
-get_qa_data <- function(path) {
+get_qa_data <- function(filepath) {
+  
+  path <- filepath
   
   # get names of Excel sheets
   sheetnames.qa <- excel_sheets(path)
@@ -60,6 +62,23 @@ get_qa_data <- function(path) {
     
     # Assign 'All' to 1st and 2nd column of 1st row
     cleaned_df[1,1:2] <- "All"
+    
+    cleaned_df <- cleaned_df %>%
+      
+      # remove unnecessary line breaks
+      mutate(across(everything(), ~ gsub("[\r\n]", " ", .)),
+             
+             # remove "1 =", "2 = " in case SAS didn't properly label data
+             across(everything(), ~ gsub("[[:digit:]] = ", "", .)),
+             
+             # rename variables if SAS hasn't labelled them properly
+             varname = ifelse(varname == "cobeu17" , "Country of Birth", varname),
+             category = ifelse(varname == "Urban/Rural Classification" & category == 1, "Large Urban Area", category),
+             category = ifelse(varname == "Urban/Rural Classification" & category == 2, "Other Urban Area", category),
+             category = ifelse(varname == "Urban/Rural Classification" & category == 3, "Accessible Small Town", category),
+             category = ifelse(varname == "Urban/Rural Classification" & category == 4, "Remote Small Town", category),
+             category = ifelse(varname == "Urban/Rural Classification" & category == 5, "Accessible Rural", category),
+             category = ifelse(varname == "Urban/Rural Classification" & category == 6, "Remote Rural", category))
     
     # add df to list
     cleaned.qa.list <- c(cleaned.qa.list, list(cleaned_df))

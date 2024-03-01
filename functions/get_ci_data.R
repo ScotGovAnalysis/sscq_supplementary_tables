@@ -145,15 +145,24 @@ get_ci_data <- function(paths){
         mutate(Variable = as.character(Variable))
       
       # merge data frame with qa data to add 'Weighted N' column
-      # and do suppression
       df <- df %>%
         left_join(y = cleaned_qa_list[[tolower(var)]][, 
                                                       c(1:3, 3+i,
                                                         length(cleaned_qa_list[[tolower(var)]]))], 
-                  by = c("Variable" = "varname", "Category" = "category")) %>%
+                  by = c("Variable" = "varname", "Category" = "category"))
+        
+      # transform . to 100.1 to avoid the introduction of NAs in next step
+      df[[9]] <- ifelse(df[[9]] == ".", 100.1, df[[9]])
+      
+      # transform column with number of observations to numeric
+      df[[9]] <- as.numeric(df[[9]])
+      
+      df <- df %>%
         
         # suppress values which are based on 0 or 1 observation
-        mutate(across(c(5:7), ~ ifelse(`N` <= 1, "*", .))) %>%
+        mutate(across(c(5:7), \(x) ifelse(.[[9]] <= 1, "*", 
+                                          # re-transform 101.1 to .
+                                          ifelse(.[[9]] == 101.1, ".", x)))) %>%
         
         # delete response categories which include 'refused'
         filter(!str_detect(Category, regex('refused', ignore_case = T))) %>%
