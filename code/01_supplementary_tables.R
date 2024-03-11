@@ -63,4 +63,9 @@ ci_tables_list <- ci_tables_list[lookup_df$vname]
 ### 3 - Export ----
 
 # export as Excel file
+# A few warning messages are displayed when executing the following code
+# (e.g., tab_titles have been cleaned automatically +
+# there are no notes in your table)
+# This is nothing to be concerned about as the notes are displayed right 
+# after the word they refer to rather than in a separate column
 export_tables(ci_tables_list)

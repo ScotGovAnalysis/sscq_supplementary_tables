@@ -144,9 +144,12 @@ get_ci_data <- function(paths){
                !!paste0((.)[3][7, ], "\n(", colnames(.)[7], ")") := 7) %>%
         mutate(Variable = as.character(Variable))
       
-      
-      # merge data frame with qa data to add 'Weighted N' column
       df <- df %>%
+        
+        # delete response categories which include 'refused'
+        filter(!str_detect(Category, regex('refused', ignore_case = T))) %>%
+        
+        # merge data frame with qa data to add 'Weighted N' column
         left_join(y = cleaned_qa_list[[tolower(var)]][, 
                                                       c(1:3, 3+i,
                                                         length(cleaned_qa_list[[tolower(var)]]))], 
@@ -166,7 +169,7 @@ get_ci_data <- function(paths){
                                           ifelse(.[[9]] == 101.1, ".", x)))) %>%
         
         # delete response categories which include 'refused'
-        filter(!str_detect(Category, regex('refused', ignore_case = T))) %>%
+        #filter(!str_detect(Category, regex('refused', ignore_case = T))) %>%
         
         # select relevant columns
         select(c(1:3, 8, 4, 5:7))

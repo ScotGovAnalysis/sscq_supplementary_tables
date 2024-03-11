@@ -53,7 +53,10 @@ get_qa_data <- function(filepath) {
       rename_with(~ c('category', "Weighted N"), c(2, 3)) %>%
       
       # remove unwanted * (see below for explanation)
-      mutate(category = gsub("\\*+","", category))
+      mutate(category = gsub("\\*+","", category)) %>%
+      
+      # remove columns that include the word 'refused'
+      select(-contains("refused", ignore.case = TRUE))
     
     # remove unwanted * in variables 
     # (* was previously used for footnotes but is no longer needed)

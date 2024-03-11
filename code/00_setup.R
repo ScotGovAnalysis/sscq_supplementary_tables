@@ -301,6 +301,8 @@ levels <- c("all", "simd20q", "urbrur16code", "la", "healthboard",
             "ltcondition", "smoking", "indcare", "psd")
 
 # labels of variables to be included in each sheet (as rows)
+# this must match the label provided by SAS as the QA and CI data
+# won't match otherwise
 labels <- c("All", 
             "Scottish Index of Multiple Deprivation - Quintiles", 
             "Urban/Rural Classification",
@@ -314,7 +316,7 @@ labels <- c("All",
             "Marital Status", 
             "Highest Qualification Held",
             "Respondent Economic Activity",
-            "Veteran Status",
+            "Veterans",
             "Limiting Long-term Physical or Mental Health Condition",
             "Currently Smokes Cigarettes",
             "Provides unpaid care",
