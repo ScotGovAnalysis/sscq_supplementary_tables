@@ -144,13 +144,14 @@ get_ci_data <- function(paths){
                !!paste0((.)[3][7, ], "\n(", colnames(.)[7], ")") := 7) %>%
         mutate(Variable = as.character(Variable))
       
+      
       # merge data frame with qa data to add 'Weighted N' column
       df <- df %>%
         left_join(y = cleaned_qa_list[[tolower(var)]][, 
                                                       c(1:3, 3+i,
                                                         length(cleaned_qa_list[[tolower(var)]]))], 
-                  by = c("Variable" = "varname", "Category" = "category"))
-        
+                  by = c("Variable" = "varname", "Category" = "category")) 
+      
       # transform . to 100.1 to avoid the introduction of NAs in next step
       df[[9]] <- ifelse(df[[9]] == ".", 100.1, df[[9]])
       
@@ -159,8 +160,8 @@ get_ci_data <- function(paths){
       
       df <- df %>%
         
-        # suppress values which are based on 0 or 1 observation
-        mutate(across(c(5:7), \(x) ifelse(.[[9]] <= 1, "*", 
+        # suppress values which are based on 1 or 2 observations
+        mutate(across(c(5:7), \(x) ifelse(.[[9]] <= 2, "*", 
                                           # re-transform 101.1 to .
                                           ifelse(.[[9]] == 101.1, ".", x)))) %>%
         

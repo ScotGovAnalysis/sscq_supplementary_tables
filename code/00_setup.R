@@ -123,7 +123,8 @@ lookup_df <- data.frame(rbind(
   c("ILOEmp", "Respondent Economic Activity", "Economic Activity"),
   c("TopQual", "Highest Qualification Held", "Highest Qualification"),
   c("SIMD20Q", "Scottish Index of Multiple Deprivation - Quintiles", "SIMD Quintiles"),
-  c("UrbRur16Code", "Urban/Rural Classification", "Urban Rural")
+  c("UrbRur16Code", "Urban/Rural Classification", "Urban Rural"),
+  c("Vets", "Veteran Status", "Veterans")
 ))
 names(lookup_df) <- c("vname", "title", "tabname")
 lookup_df$vname <- tolower(lookup_df$vname)
@@ -264,22 +265,39 @@ f_trans_factor <- function(x) {
     x == "SIMD20Q3" ~ "3",
     x == "SIMD20Q4" ~ "4",
     x == "SIMD20Q5" ~ "5",
-    x == "UrbRur16Code1" ~ "1",
-    x == "UrbRur16Code2" ~ "2",
-    x == "UrbRur16Code3" ~ "3",
-    x == "UrbRur16Code4" ~ "4",
-    x == "UrbRur16Code5" ~ "5",
-    x == "UrbRur16Code6" ~ "6"
+    x == "UrbRur16Code1" ~ "Large Urban Area",
+    x == "UrbRur16Code2" ~ "Other Urban Area",
+    x == "UrbRur16Code3" ~ "Accessible Small Town",
+    x == "UrbRur16Code4" ~ "Remote Small Town",
+    x == "UrbRur16Code5" ~ "Accessible Rural",
+    x == "UrbRur16Code6" ~ "Remote Rural",
+    x == "Vets0" ~ "No",
+    x == "Vets1" ~ "Yes",
+    x == "genhealth_F1" ~ "Very good",
+    x == "genhealth_F2" ~ "Good",
+    x == "genhealth_F3" ~ "Fair",
+    x == "genhealth_F4" ~ "Bad",
+    x == "genhealth_F5" ~ "Very bad",
+    x == "genhealth1" ~ "Good/Very good",
+    x == "genhealth2" ~ "Fair",
+    x == "genhealth3" ~ "Bad/Very bad",
+    x == "topQual1" ~ "Level 1 - O Grade, Standard Grade or equiv (SVQ level 1 or 2)",
+    x == "topQual2" ~ "Level 2 - Higher, A level or equivalent (SVQ Level 3)",
+    x == "topQual3" ~ "Level 3 - HNC/HND or equivalent (SVQ Level 4)",
+    x == "topQual4" ~ "Level 4 - Degree, Professional qualification (Above SVQ Level 4)",
+    x == "topQual5" ~ "Other qualification",
+    x == "topQual6" ~ "No qualifications"
   )
 }
 ### 7 - Required variables - TO UPDATE ----
 
 # variable names to be included in each sheet (as rows)
+# all variable names in lower case
 levels <- c("all", "simd20q", "urbrur16code", "la", "healthboard", 
             "htype2a", "outten", "caraccess",
             "cobeu17", "ethsupergroup", "religionb", 
             "sexidg", "asg", "ageg",
-            "marstatb", "topqual", "iloemp", 
+            "marstatb", "topqual", "iloemp", "vets",
             "ltcondition", "smoking", "indcare", "psd")
 
 # labels of variables to be included in each sheet (as rows)
@@ -296,6 +314,7 @@ labels <- c("All",
             "Marital Status", 
             "Highest Qualification Held",
             "Respondent Economic Activity",
+            "Veteran Status",
             "Limiting Long-term Physical or Mental Health Condition",
             "Currently Smokes Cigarettes",
             "Provides unpaid care",

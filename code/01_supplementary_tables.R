@@ -24,7 +24,7 @@ source(here::here("code", "00_setup.R"))
 cleaned_qa_list <- get_qa_data(qa.path)
 
 # check QA workbook includes all required variables
-# in not character(0), check if set_up script includes 
+# if output is not character(0), check if 00_setup script includes 
 # all required variables
 setdiff(names(cleaned_qa_list), lookup_df$vname)
 
@@ -39,7 +39,7 @@ files <- list.files(path = ci.path,
 files
 
 # view files that have CI sheets but are not included in lookup_df
-# update look_df where appropriate
+# update lookup_df where appropriate
 files[!grepl(paste(lookup_df$vname,
                             collapse = "|"), 
                       tolower(files))]

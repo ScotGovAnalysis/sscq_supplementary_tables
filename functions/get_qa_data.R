@@ -72,13 +72,7 @@ get_qa_data <- function(filepath) {
              across(everything(), ~ gsub("[[:digit:]] = ", "", .)),
              
              # rename variables if SAS hasn't labelled them properly
-             varname = ifelse(varname == "cobeu17" , "Country of Birth", varname),
-             category = ifelse(varname == "Urban/Rural Classification" & category == 1, "Large Urban Area", category),
-             category = ifelse(varname == "Urban/Rural Classification" & category == 2, "Other Urban Area", category),
-             category = ifelse(varname == "Urban/Rural Classification" & category == 3, "Accessible Small Town", category),
-             category = ifelse(varname == "Urban/Rural Classification" & category == 4, "Remote Small Town", category),
-             category = ifelse(varname == "Urban/Rural Classification" & category == 5, "Accessible Rural", category),
-             category = ifelse(varname == "Urban/Rural Classification" & category == 6, "Remote Rural", category))
+             varname = ifelse(varname == "cobeu17" , "Country of Birth", varname))
     
     # add df to list
     cleaned.qa.list <- c(cleaned.qa.list, list(cleaned_df))
