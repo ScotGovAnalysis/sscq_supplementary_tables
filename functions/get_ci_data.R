@@ -45,6 +45,14 @@ get_ci_data <- function(paths){
       # remove tibbles with only one row
       split_table <- split_table[purrr::map_lgl(split_table, ~ nrow(.) != 1)]
       
+      # reorder columns of first table
+      split_table[[1]] <- split_table[[1]] %>%
+        select(c(7, 1:6)) %>%
+        `colnames<-` (c("All", colnames(split_table[[2]])[2:7])) %>%
+        mutate(All = as.character(All),
+               All = "All",
+               `...7` = as.double(`...7`))
+      
       # assign name to list item, remove first two rows and
       # select relevant columns
       split_table <- lapply(split_table, function(w){
@@ -54,12 +62,6 @@ get_ci_data <- function(paths){
         return(w)
       }
       )
-      
-      split_table[[1]] <- split_table[[1]] %>%
-        `colnames<-` (c(colnames(split_table[[2]])[2:6], "All")) %>%
-        mutate(All = "All",
-               `NA` = as.double(`NA`)) %>%
-        select(c(6, 1:5))
       
       # assign name to second column in first list item
       colnames(split_table[[1]])[2] <- "Variable"

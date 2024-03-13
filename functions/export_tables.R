@@ -29,11 +29,11 @@ export_tables <- function(data) {
   ### 2 - Cover list ----
   
   # create spreadsheet cover
-  cover_df <- data.frame(
-    subsection_title = cover$title,
-    subsection_content = cover$text,
-    check.names = FALSE
-  )
+ # cover_df <- data.frame(
+ #   subsection_title = cover$title,
+ #   subsection_content = cover$text,
+ #   check.names = FALSE
+ # )
   
   ### 3 - Contents sheet ----
   
@@ -88,7 +88,7 @@ export_tables <- function(data) {
       ),
       tables = c(
         list(
-          cover_df,
+          cover_list,
           contents_df,
           notes_df),
         data
@@ -109,3 +109,6 @@ export_tables <- function(data) {
                          overwrite = TRUE)
   
 }
+
+convert_to_ods(paste0(export.path,
+                      fname))

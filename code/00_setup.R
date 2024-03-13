@@ -25,63 +25,41 @@ fname <- "supplementary_tables.xlsx"
 
 ### 3 - Cover sheet - TO UPDATE ----
 
-# titles of sections in cover sheet
-cover_title <- c(
-  "Date of Publication",
-  "Overview",
-  "Grouping of Variables",
-  "Confidence Intervals",
-  "Table Structure",
-  "Weighting"
+# titles and accompanying texts for cover sheet
+cover_list <-  list(
+  "Date of Publication" = paste0("Date published: ", pub_date),
+  "Overview" = paste0("These tables provide the latest results from the Scottish Surveys Core Questions dataset, covering the collection period for 2022.\n\n",
+                     "They consist of a full analysis of each topic across all possible social and geographic breakdowns."),
+  "Grouping of Variables" = paste0("Certain ethnic groups, religions and countries of birth were grouped to sufficient numbers of responses to enable statistical analysis.\n\n",
+                                  "More information on this can be found in the technical report."),
+  "Confidence Intervals" = paste0("Also included in these tables are the 95% confidence intervals on each estimate.\n\n",
+                                 "Where confidence intervals do not overlap, users may assume that there is a statistically significant difference between the two groups."),
+  "Table Structure" = paste0("Most information is transposed in tables across different sections, providing different options for comparisons.\n\n",
+                            "All tables break down percentages in rows.\n\n",
+                            "‘Refused’ and ‘don’t know’ responses are excluded, so row totals may not add to 100%, and numbers of adults and sample may not add to the Scotland total for each cross-variable."),
+  "Weighting" = paste0("Percentage estimates are based on weighted analysis of the SSCQ data.\n\n",
+                      "In a dataset with full reponse, individual respondents would have a weight of 1, but due to the weighting procedures to account for non-response and sampling, individual respondents can have any value positive weight.\n\n",
+                      "It is therefore not possible to calculate individual sample numbers in each respondent grouping by combining weighted estimates with unweighted sample size (N)."),
+  "Further Information" = c("[SSCQ website](https://www.gov.scot/collections/scottish-surveys-core-questions/)")
 )
-
-# text included in cover sheet
-cover_text <- c(
-  paste0("Date published: ", pub_date),
-  paste0("These tables provide the latest results from the Scottish Surveys Core Questions dataset, covering the collection period for 2022.\n\n",
-         "They consist of a full analysis of each topic across all possible social and geographic breakdowns."),
-  paste0("Certain ethnic groups, religions and countries of birth were grouped to sufficient numbers of responses to enable statistical analysis.\n\n",
-         "More information on this can be found in the technical report."),
-  paste0("Also included in these tables are the 95% confidence intervals on each estimate.\n\n",
-         "Where confidence intervals do not overlap, users may assume that there is a statistically significant difference between the two groups."),
-  paste0("Most information is transposed in tables across different sections, providing different options for comparisons.\n\n",
-         "All tables break down percentages in rows.\n\n",
-         "‘Refused’ and ‘don’t know’ responses are excluded, so row totals may not add to 100%, and numbers of adults and sample may not add to the Scotland total for each cross-variable."),
-  paste0("Percentage estimates are based on weighted analysis of the SSCQ data.\n\n",
-         "In a dataset with full reponse, individual respondents would have a weight of 1, but due to the weighting procedures to account for non-response and sampling, individual respondents can have any value positive weight.\n\n",
-         "It is therefore not possible to calculate individual sample numbers in each respondent grouping by combining weighted estimates with unweighted sample size (N).")
-)
-
-cover <- data.frame(title = cover_title,
-                    text = cover_text)
 
 ### 4 - Notes - TO UPDATE ----
 
-# first column of notes sheet 
-# (strings the notes will be added to)
-label <- c("White: Other",
-           "Asian",
-           "All other ethnic groups",
-           "Scotland",
-           "Rest of UK",
-           "Rest of EU",
-           "Rest of World",
-           "Other")
+# notes and their explanation
+notes_lookup <- tibble::tribble(
+  ~short, ~text,
+  "Scotland", "Scotland: Respondents who specifically list 'Scotland' as their country of birth",
+  "Rest of UK", "Rest of UK: England, Northern Ireland, Wales, Great Britain/United Kingdom (Not Otherwise Specified)",
+  "Rest of EU", "Rest of EU: Austria, Belgium, Bulgaria, Croatia, Cyprus (European Union), Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain, Sweden",
+  "Rest of World", "Rest of World: All other responses (excluding refusals)",
+  "All other ethnic groups", "'All other ethnic groups' includes categories within the 'Mixed or Multiple Ethnic Group', ‘African’, ‘Caribbean or Black’, and ‘Other Ethnic Group’ sections",
+  "White: Other", "'White: Other' includes ‘White: Irish’, ‘White: Gypsy/Traveller’ and ‘White: Other White Ethnic Group’",
+  "Asian", "'Asian' includes the categories Asian, Asian Scottish or Asian British",
+  "Other", "The 'Other' group includes Hindu, Buddhist, Pagan, Jewish, Sikh, and 'Another religion' responses"
+)
 
-# notes to be added 'label' strings
-notes <- c(
-  "'White: Other' includes ‘White: Irish’, ‘White: Gypsy/Traveller’ and ‘White: Other White Ethnic Group’",
-  "'Asian' includes the categories Asian, Asian Scottish or Asian British",
-  "'All other ethnic groups' includes categories within the 'Mixed or Multiple Ethnic Group', ‘African’, ‘Caribbean or Black’, and ‘Other Ethnic Group’ sections.", 
-  "Scotland: Respondents who specifically list “Scotland” as their country of birth",
-  "Rest of UK: England, Northern Ireland, Wales, Great Britain/United Kingdom (Not Otherwise Specified)",
-  "Rest of EU: Austria, Belgium, Bulgaria, Croatia, Cyprus (European Union), Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, , Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain, Sweden",
-  "Rest of World: All other responses (excluding refusals)",
-  "The 'Other' group includes Hindu, Buddhist, Pagan, Jewish, Sikh, and 'Another religion' responses")
+notes_lookup$number <- paste0("[note ", 1:length(notes), "]")
 
-notes_lookup <- data.frame(number = paste0("[note ", 1:length(notes), "]"), 
-                           text = notes,
-                           short = label)
 
 ### 5 - Variable lookups - TO UPDATE ----
 
@@ -136,7 +114,8 @@ head(lookup_df)
 
 ### 6 - Formatting - TO UPDATE ----
 
-# labels for variables included in CI sheets
+# Labels for variables included in CI sheets.
+# Provided labels must match the labels used in SAS.
 f_trans_factor <- function(x) {
   dplyr::case_when(
     x == "ageG1"       ~ "16-24",
@@ -291,39 +270,37 @@ f_trans_factor <- function(x) {
 }
 ### 7 - Required variables - TO UPDATE ----
 
-# variable names to be included in each sheet (as rows)
-# all variable names in lower case
-levels <- c("all", "simd20q", "urbrur16code", "la", "healthboard", 
-            "htype2a", "outten", "caraccess",
-            "cobeu17", "ethsupergroup", "religionb", 
-            "sexidg", "asg", "ageg",
-            "marstatb", "topqual", "iloemp", "vets",
-            "ltcondition", "smoking", "indcare", "psd")
-
-# labels of variables to be included in each sheet (as rows)
-# this must match the label provided by SAS as the QA and CI data
-# won't match otherwise
-labels <- c("All", 
-            "Scottish Index of Multiple Deprivation - Quintiles", 
-            "Urban/Rural Classification",
-            "Local Authority", "Health Board",
-            "Household Type", "Detailed Tenure",
-            "Car Access", "Country of Birth", 
-            "Ethnic Group", "Religion",
-            "Sexual Orientation", 
-            "Respondent Age and Sex",
-            "Respondent Age Group",
-            "Marital Status", 
-            "Highest Qualification Held",
-            "Respondent Economic Activity",
-            "Veterans",
-            "Limiting Long-term Physical or Mental Health Condition",
-            "Currently Smokes Cigarettes",
-            "Provides unpaid care",
-            "Police Scotland Division")
-
-reqvar <- data.frame(levels = levels,
-                     labels = labels)
+# Variable names (=levels) and labels of variables to be 
+# included in each sheet (as rows).
+# The labels must match the label provided by SAS as the QA and CI data
+# won't match otherwise.
+# Variable names should be in lower case.
+# The order of the variables determines the order in the final output.
+reqvar <- tibble::tribble(
+  ~levels, ~labels,
+  "all", "All", 
+  "simd20q", "Scottish Index of Multiple Deprivation - Quintiles", 
+  "urbrur16code", "Urban/Rural Classification",
+  "la", "Local Authority", 
+  "healthboard", "Health Board",
+  "htype2a", "Household Type",
+  "outten", "Detailed Tenure",
+  "caraccess", "Car Access", 
+  "cobeu17", "Country of Birth", 
+  "ethsupergroup", "Ethnic Group", 
+  "religionb", "Religion",
+  "sexidg", "Sexual Orientation", 
+  "asg", "Respondent Age and Sex",
+  "ageg","Respondent Age Group",
+  "marstatb", "Marital Status", 
+  "topqual", "Highest Qualification Held",
+  "iloemp", "Respondent Economic Activity",
+  "vets", "Veterans",
+  "ltcondition", "Limiting Long-term Physical or Mental Health Condition",
+  "smoking", "Currently Smokes Cigarettes",
+  "indcare", "Provides unpaid care",
+  "psd", "Police Scotland Division"
+)
 
 ### 8 - Load packages ----
 
@@ -333,6 +310,7 @@ library(readxl)
 library(sdcTable)
 library(a11ytables)
 library(data.table)
+library(odsconvertr)
 
 ### 9 - Load functions from functions folder of Rproject ----
 
