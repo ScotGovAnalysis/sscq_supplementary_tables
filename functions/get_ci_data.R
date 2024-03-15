@@ -28,6 +28,14 @@ get_ci_data <- function(paths){
     mylist <- lapply(excel_sheets(path)[-1], read_excel, 
                      path = path, skip = 10, col_names = FALSE)
     
+    # different code for continuous variables
+    if(all(excel_sheets(path) == "swemwbs")){
+      sheetnames <- "swemwbs"
+      mylist <- lapply(excel_sheets(path), read_excel, 
+                       path = path, skip = 8, col_names = FALSE)
+      
+    }
+    
     # add sheet names as list names
     names(mylist) <- sheetnames
     
@@ -44,6 +52,18 @@ get_ci_data <- function(paths){
       
       # remove tibbles with only one row
       split_table <- split_table[purrr::map_lgl(split_table, ~ nrow(.) != 1)]
+      
+      # remove labels column for continuous variables
+      if(split_table[[1]][2,2] == "Label"){
+        split_table[[1]] <- split_table[[1]] %>%
+          select(c(1, 3:8))
+        
+        split_table[-1] <- lapply(split_table[-1], function(x) { x["...3"] <- NULL; x })
+        
+        split_table <- lapply(split_table, function(x) { colnames(x) <- c(paste0("...", 1:7)); x })
+      }
+      
+      split_table
       
       # reorder columns of first table
       split_table[[1]] <- split_table[[1]] %>%
@@ -106,15 +126,15 @@ get_ci_data <- function(paths){
         # convert decimals to %, replace true 0 with . and 
         # round to 1 decimal
         mutate(`%` = as.numeric(`%`)*100,
-               `%` = ifelse(`%` == 0, ".", round(`%`, 1)),
+               `%` = ifelse(`%` == 0, ".", janitor::round_half_up(`%`, 1)),
                `95% CI\nlower limit` = as.numeric(`95% CI\nlower limit`)*100,
                `95% CI\nlower limit` = ifelse(`95% CI\nlower limit` == 0, 
                                               ".", 
-                                              round(`95% CI\nlower limit`, 1)),
+                                              janitor::round_half_up(`95% CI\nlower limit`, 1)),
                `95% CI\nupper limit` = as.numeric(`95% CI\nupper limit`)*100,
                `95% CI\nupper limit` = ifelse(`95% CI\nupper limit` == 0, 
                                               ".", 
-                                              round(`95% CI\nupper limit`, 1)),
+                                              janitor::round_half_up(`95% CI\nupper limit`, 1)),
                `Unweighted N` = as.numeric(`Unweighted N`),
                
                # transform 'Variable' to ordered factor
@@ -146,10 +166,12 @@ get_ci_data <- function(paths){
                !!paste0((.)[3][7, ], "\n(", colnames(.)[7], ")") := 7) %>%
         mutate(Variable = as.character(Variable))
       
+      # delete response categories which include 'refused'
       df <- df %>%
-        
-        # delete response categories which include 'refused'
-        filter(!str_detect(Category, regex('refused', ignore_case = T))) %>%
+        filter(!str_detect(Category, regex('refused', ignore_case = T)))
+      
+      if(var != "swemwbs"){
+      df <- df %>%
         
         # merge data frame with qa data to add 'Weighted N' column
         left_join(y = cleaned_qa_list[[tolower(var)]][, 
@@ -165,8 +187,8 @@ get_ci_data <- function(paths){
       
       df <- df %>%
         
-        # suppress values which are based on 1 or 2 observations
-        mutate(across(c(5:7), \(x) ifelse(.[[9]] <= 2, "*", 
+        # suppress values which are based 5 or fewer observations
+        mutate(across(c(5:7), \(x) ifelse(.[[9]] <= 5, "*", 
                                           # re-transform 101.1 to .
                                           ifelse(.[[9]] == 101.1, ".", x)))) %>%
         
@@ -175,23 +197,41 @@ get_ci_data <- function(paths){
         
         # select relevant columns
         select(c(1:3, 8, 4, 5:7))
+      }
       
       # add notes to column names
       for (w in 1:length(notes_lookup$short)) {
-        df <- df %>% mutate(Category = ifelse(Category == notes_lookup$short[w],
-                                              paste0(Category, 
-                                                     "\n",
-                                                     notes_lookup$number[w]),
-                                              Category))
+        df <- df %>% mutate(Category = ifelse(
+          Category == notes_lookup$short[w],
+          paste0(Category, 
+                 "\n",
+                 notes_lookup$number[w]),
+          Category))
       }
       
+      # Round Weighted and Unweighted N
+      df <- df %>% 
+        
+        # Unweighted N are rounded to nearest 100
+        mutate(`Unweighted N` = janitor::round_half_up(
+          as.numeric(
+            `Unweighted N`), -2)) %>%
+        
+        # If Weighted N exists, it is transformed to a numeric variable
+        mutate_at(vars(contains(c("Weighted N"), ignore.case = F)), 
+                  as.numeric) %>%
+        
+        # If Weighted N exists, it is rounded to nearest 1,000
+        mutate_at(vars(contains(c("Weighted N"), ignore.case = F)), 
+                  janitor::round_half_up, -3)
+    
+      
       # get columns that are named the same for all list items i
-      col <- df %>% select(-group) %>% select(c(1:4))
+      col <- df %>% select(-group) %>% select(c("Variable":"Unweighted N"))
       
       # add unique columns of list item i to list
       # (%, upper CI and lower CI)
-      ci_list <- c(ci_list, list(df[, 6:8]))
-      
+      ci_list <- c(ci_list, list(df[, (length(df)-2):length(df)]))
     }
     
     # merge common columns and unique columns to data frame
@@ -199,7 +239,7 @@ get_ci_data <- function(paths){
     
     # reorder columns
     ci_tables <- ci_tables %>% 
-      relocate(c(`Weighted N`, `Unweighted N`), .after = last_col()) 
+      relocate(any_of(c("Weighted N", "Unweighted N")), .after = last_col()) 
     
     # add data frame to list
     ci_tables_list <- c(ci_tables_list, list(ci_tables))

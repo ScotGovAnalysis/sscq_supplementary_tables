@@ -25,6 +25,9 @@ get_qa_data <- function(filepath) {
   # clean list names
   names(qa.list) <- gsub("^.*\\- ","", sheetnames.qa)
   
+  # remove swemwbs sheet as this variable is continuous
+  qa.list[["swemwbs"]] <- NULL
+  
   # loop through the list and select relevant variables 
   # (i.e., Weighted N and number of observations in each category)
   cleaned.qa.list <- list()

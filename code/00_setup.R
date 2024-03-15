@@ -28,17 +28,17 @@ fname <- "supplementary_tables.xlsx"
 # titles and accompanying texts for cover sheet
 cover_list <-  list(
   "Date of Publication" = paste0("Date published: ", pub_date),
-  "Overview" = paste0("These tables provide the latest results from the Scottish Surveys Core Questions dataset, covering the collection period for 2022.\n\n",
+  "Overview" = c("These tables provide the latest results from the Scottish Surveys Core Questions dataset, covering the collection period for 2022.",
                      "They consist of a full analysis of each topic across all possible social and geographic breakdowns."),
-  "Grouping of Variables" = paste0("Certain ethnic groups, religions and countries of birth were grouped to sufficient numbers of responses to enable statistical analysis.\n\n",
+  "Grouping of Variables" = c("Certain ethnic groups, religions and countries of birth were grouped to sufficient numbers of responses to enable statistical analysis.",
                                   "More information on this can be found in the technical report."),
-  "Confidence Intervals" = paste0("Also included in these tables are the 95% confidence intervals on each estimate.\n\n",
+  "Confidence Intervals" = c("Also included in these tables are the 95% confidence intervals on each estimate.",
                                  "Where confidence intervals do not overlap, users may assume that there is a statistically significant difference between the two groups."),
-  "Table Structure" = paste0("Most information is transposed in tables across different sections, providing different options for comparisons.\n\n",
-                            "All tables break down percentages in rows.\n\n",
+  "Table Structure" = c("Most information is transposed in tables across different sections, providing different options for comparisons.",
+                            "All tables break down percentages in rows.",
                             "‘Refused’ and ‘don’t know’ responses are excluded, so row totals may not add to 100%, and numbers of adults and sample may not add to the Scotland total for each cross-variable."),
-  "Weighting" = paste0("Percentage estimates are based on weighted analysis of the SSCQ data.\n\n",
-                      "In a dataset with full reponse, individual respondents would have a weight of 1, but due to the weighting procedures to account for non-response and sampling, individual respondents can have any value positive weight.\n\n",
+  "Weighting" = c("Percentage estimates are based on weighted analysis of the SSCQ data.",
+                      "In a dataset with full reponse, individual respondents would have a weight of 1, but due to the weighting procedures to account for non-response and sampling, individual respondents can have any value positive weight.",
                       "It is therefore not possible to calculate individual sample numbers in each respondent grouping by combining weighted estimates with unweighted sample size (N)."),
   "Further Information" = c("[SSCQ website](https://www.gov.scot/collections/scottish-surveys-core-questions/)")
 )
@@ -73,6 +73,8 @@ lookup_df <- data.frame(rbind(
   c("LTCondition", "Limiting Long-term Physical or Mental Health Condition", "Long-term Conditions"),
   c("smoking", "Currently Smokes Cigarettes", "Smoking"),
   c("IndCare", "Provides Care", "Care"),
+  c("swemwbs", "Average Shortened Warwick-Edinburgh Mental Wellbeing (SWEMWBS) Score",
+    "Mental Wellbeing"),
   c("CrimeArea_F", "Perceptions of Local Crime Rate (All Categories)", "Crime in Area"),
   c("CrimeArea", "Perceptions of Local Crime Rate (Grouped)", "Crime in Area Grouped"),
   c("PolConA_F", "Confidence in Police to Prevent Crime (All Categories)", "Police Confidence A"),
@@ -101,7 +103,7 @@ lookup_df <- data.frame(rbind(
   c("ILOEmp", "Respondent Economic Activity", "Economic Activity"),
   c("TopQual", "Highest Qualification Held", "Highest Qualification"),
   c("SIMD20Q", "Scottish Index of Multiple Deprivation - Quintiles", "SIMD Quintiles"),
-  c("UrbRur16Code", "Urban/Rural Classification", "Urban Rural"),
+  c("UrbRur20Code", "Urban/Rural Classification", "Urban Rural"),
   c("Vets", "Veteran Status", "Veterans")
 ))
 names(lookup_df) <- c("vname", "title", "tabname")
@@ -244,12 +246,12 @@ f_trans_factor <- function(x) {
     x == "SIMD20Q3" ~ "3",
     x == "SIMD20Q4" ~ "4",
     x == "SIMD20Q5" ~ "5",
-    x == "UrbRur16Code1" ~ "Large Urban Area",
-    x == "UrbRur16Code2" ~ "Other Urban Area",
-    x == "UrbRur16Code3" ~ "Accessible Small Town",
-    x == "UrbRur16Code4" ~ "Remote Small Town",
-    x == "UrbRur16Code5" ~ "Accessible Rural",
-    x == "UrbRur16Code6" ~ "Remote Rural",
+    x == "UrbRur20Code1" ~ "Large Urban Area",
+    x == "UrbRur20Code2" ~ "Other Urban Area",
+    x == "UrbRur20Code3" ~ "Accessible Small Town",
+    x == "UrbRur20Code4" ~ "Remote Small Town",
+    x == "UrbRur20Code5" ~ "Accessible Rural",
+    x == "UrbRur20Code6" ~ "Remote Rural",
     x == "Vets0" ~ "No",
     x == "Vets1" ~ "Yes",
     x == "genhealth_F1" ~ "Very good",
@@ -265,7 +267,8 @@ f_trans_factor <- function(x) {
     x == "topQual3" ~ "Level 3 - HNC/HND or equivalent (SVQ Level 4)",
     x == "topQual4" ~ "Level 4 - Degree, Professional qualification (Above SVQ Level 4)",
     x == "topQual5" ~ "Other qualification",
-    x == "topQual6" ~ "No qualifications"
+    x == "topQual6" ~ "No qualifications",
+    x == "swemwbs" ~ "Average Wellbeing (/35)"
   )
 }
 ### 7 - Required variables - TO UPDATE ----
@@ -280,7 +283,7 @@ reqvar <- tibble::tribble(
   ~levels, ~labels,
   "all", "All", 
   "simd20q", "Scottish Index of Multiple Deprivation - Quintiles", 
-  "urbrur16code", "Urban/Rural Classification",
+  "urbrur20code", "Urban/Rural Classification",
   "la", "Local Authority", 
   "healthboard", "Health Board",
   "htype2a", "Household Type",
