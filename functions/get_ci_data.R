@@ -112,6 +112,7 @@ get_ci_data <- function(paths){
       # assign 'All' two first two columns in first row
       df[1,1:2] <- "All"
       
+      
       # clean the data frame for export
       df <- df %>% 
         
@@ -123,15 +124,28 @@ get_ci_data <- function(paths){
         # convert tibble to data frame to facilitate later steps
         as.data.frame(.) %>%
         
+        # transform % and CIs to numeric
+        mutate(`%` = as.numeric(`%`),
+              `95% CI\nlower limit` = as.numeric(`95% CI\nlower limit`),
+              `95% CI\nupper limit` = as.numeric(`95% CI\nupper limit`))
+      
+      # multiply % and CIs by 100 if not continuous
+      if(var != "swemwbs"){
+        df <- df %>% 
+          mutate(`%` = `%`*100,
+                 `95% CI\nlower limit` = `95% CI\nlower limit`*100,
+                 `95% CI\nupper limit` = `95% CI\nupper limit`*100)
+        }
+      
+      
+      df <- df %>%
+        
         # convert decimals to %, replace true 0 with . and 
         # round to 1 decimal
-        mutate(`%` = as.numeric(`%`)*100,
-               `%` = ifelse(`%` == 0, ".", janitor::round_half_up(`%`, 1)),
-               `95% CI\nlower limit` = as.numeric(`95% CI\nlower limit`)*100,
+        mutate(`%` = ifelse(`%` == 0, ".", janitor::round_half_up(`%`, 1)),
                `95% CI\nlower limit` = ifelse(`95% CI\nlower limit` == 0, 
                                               ".", 
                                               janitor::round_half_up(`95% CI\nlower limit`, 1)),
-               `95% CI\nupper limit` = as.numeric(`95% CI\nupper limit`)*100,
                `95% CI\nupper limit` = ifelse(`95% CI\nupper limit` == 0, 
                                               ".", 
                                               janitor::round_half_up(`95% CI\nupper limit`, 1)),

@@ -25,24 +25,18 @@ export_tables <- function(data) {
   tab.names <- data.table(var = names(data))
   tab.names[lookup_df, var := tabname, on = .(var = vname)]
   tab.names <- as.vector(tab.names)[[1]]
-  
-  ### 2 - Cover list ----
-  
-  # create spreadsheet cover
- # cover_df <- data.frame(
- #   subsection_title = cover$title,
- #   subsection_content = cover$text,
- #   check.names = FALSE
- # )
+  tab.names.cleaned <- gsub(" ", "_", tab.names)
+  tab.names.cleaned <- gsub("-", "", tab.names.cleaned)
   
   ### 3 - Contents sheet ----
   
   # create contents page
   contents_df <- data.frame(
-    "Sheet name" = c("Notes", tab.names),
+    "Sheet name" = paste0("=HYPERLINK(\"#'", c("Notes", tab.names.cleaned), "'!A1\", \"", c("Notes", tab.names.cleaned), "\")"),
     "Sheet title" = c("Notes", sheet.titles),
     check.names = FALSE
   )
+  class(contents_df$`Sheet name`) <- 'formula'
   
   ### 4 - Notes ----
   
@@ -62,7 +56,7 @@ export_tables <- function(data) {
         "Cover",
         "Contents",
         "Notes",
-        tab.names
+        tab.names.cleaned
       ),
       sheet_types = c(
         "cover",
@@ -80,6 +74,10 @@ export_tables <- function(data) {
       blank_cells = c(
         rep(NA_character_, 3+length(data))
       ),
+      custom_rows = c(
+        rep(list(NA_character_), 2),
+        rep(list(" "), length(data)+1)
+      ),
       sources = c(
         rep(NA_character_, 3),
         rep(paste0("Scottish Household Survey, ", 
@@ -95,10 +93,25 @@ export_tables <- function(data) {
       )
     )
   
+  
   ### 6 - Export to XLSX ----
   
   my_wb <- a11ytables::generate_workbook(my_a11ytable)
   
+  # add link colour to content sheet
+  linkstyle <- openxlsx::createStyle(fontColour = "#0000EE", textDecoration = "underline")
+  openxlsx::addStyle(wb = my_wb, sheet = "Contents", style = linkstyle, rows = 4:(4+length(data)), cols = 1, stack = TRUE)
+  
+  # add 'back to contents page' to each sheet
+  for(i in 3:(3+length(data))){
+  openxlsx::writeFormula(my_wb, sheet = i, 
+                         x = "=HYPERLINK(\"#'Contents'!A1\", \"Back to Contents page\")", 
+                         startCol = 1, startRow = 3)
+  }
+  
+  # change width of first column in contents sheet
+  openxlsx::setColWidths(my_wb, sheet = "Contents", cols = 1, widths = "auto")
+
   # open temp copy
   openxlsx::openXL(my_wb)
   
@@ -108,7 +121,7 @@ export_tables <- function(data) {
                                        fname),
                          overwrite = TRUE)
   
+  convert_to_ods(paste0(export.path,
+                        fname))
 }
 
-convert_to_ods(paste0(export.path,
-                      fname))

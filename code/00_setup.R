@@ -40,7 +40,10 @@ cover_list <-  list(
   "Weighting" = c("Percentage estimates are based on weighted analysis of the SSCQ data.",
                       "In a dataset with full reponse, individual respondents would have a weight of 1, but due to the weighting procedures to account for non-response and sampling, individual respondents can have any value positive weight.",
                       "It is therefore not possible to calculate individual sample numbers in each respondent grouping by combining weighted estimates with unweighted sample size (N)."),
-  "Further Information" = c("[SSCQ website](https://www.gov.scot/collections/scottish-surveys-core-questions/)")
+  "Disclosure Control" = c("All estimates based on five or fewer respondents and displayed in the supplementary tables have been denoted with ‘*’ to safeguard the confidentiality of respondents with rare characteristics.",
+                           "Cells with true zero counts are denoted with ‘.’ or 0 throughout, unless denoted ‘*’ as part of disclosure control."),
+  "Further Information" = c("[SSCQ website](https://www.gov.scot/collections/scottish-surveys-core-questions/)"),
+  "Contact" = c("[sscq@gov.scot](mailto:sscq@gov.scot)")
 )
 
 ### 4 - Notes - TO UPDATE ----
