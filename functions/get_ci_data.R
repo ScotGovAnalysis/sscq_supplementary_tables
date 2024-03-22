@@ -143,6 +143,19 @@ get_ci_data <- function(paths){
         # convert decimals to %, replace true 0 with . and 
         # round to 1 decimal
         mutate(`%` = ifelse(`%` == 0, ".", janitor::round_half_up(`%`, 1)),
+               
+               # replace negative lower CI values with 0
+               `95% CI\nlower limit` = ifelse(`95% CI\nlower limit` < 0, 
+                                              0, 
+                                              `95% CI\nlower limit`),
+               
+               # replace upper CI values > 100 with 100
+               `95% CI\nupper limit` = ifelse(`95% CI\nupper limit` > 100, 
+                                              100, 
+                                              `95% CI\nupper limit`),
+               
+               # convert decimals to %, replace true 0 with . and 
+               # round to 1 decimal
                `95% CI\nlower limit` = ifelse(`95% CI\nlower limit` == 0, 
                                               ".", 
                                               janitor::round_half_up(`95% CI\nlower limit`, 1)),
@@ -165,7 +178,7 @@ get_ci_data <- function(paths){
       
       # add notes to 'group' column
       for (b in 1:length(notes_lookup$short)) {
-        df <- df %>% mutate(group = ifelse(group == notes_lookup$short[b],
+        df <- df %>% mutate(group = ifelse(var != "smoking" & group == notes_lookup$short[b],
                                            paste0(group, 
                                                   "\n",
                                                   notes_lookup$number[b]),
@@ -216,7 +229,7 @@ get_ci_data <- function(paths){
       # add notes to column names
       for (w in 1:length(notes_lookup$short)) {
         df <- df %>% mutate(Category = ifelse(
-          Category == notes_lookup$short[w],
+          Variable != "Currently Smokes Cigarettes" & Category == notes_lookup$short[w],
           paste0(Category, 
                  "\n",
                  notes_lookup$number[w]),

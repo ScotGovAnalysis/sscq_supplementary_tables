@@ -51,17 +51,27 @@ cover_list <-  list(
 # notes and their explanation
 notes_lookup <- tibble::tribble(
   ~short, ~text,
+  "Single adult", "Single adult: 1 adult (not pension aged), no children",
+  "Small adult", "Small adult: 2 adults (not pension aged), no children",
+  "Large adult", "Large adult: 3 or more adults/pensioners, no children",
+  "Single parent", "Single parent: 1 adult/pensioner, 1 or more children",
+  "Small family", "Small family: 2 adults/pensioners, 1 or 2 children",
+  "Large family", "Large family: 2 adults/pensioners + 3 or more children, 3 or more adults/pensioners + 1 or more children",
+  "Single pensioner", "Single pensioner: One adult pension aged, no children",
+  "Older couple", "Older couple: 1 or more adults pension aged or 1 adult + 1 pensioner, no children",
   "Scotland", "Scotland: Respondents who specifically list 'Scotland' as their country of birth",
   "Rest of UK", "Rest of UK: England, Northern Ireland, Wales, Great Britain/United Kingdom (Not Otherwise Specified)",
-  "Rest of EU", "Rest of EU: Austria, Belgium, Bulgaria, Croatia, Cyprus (European Union), Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain, Sweden",
+  "EU27", "EU27: Austria, Belgium, Bulgaria, Croatia, Cyprus (European Union), Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain, Sweden",
   "Rest of World", "Rest of World: All other responses (excluding refusals)",
-  "All other ethnic groups", "'All other ethnic groups' includes categories within the 'Mixed or Multiple Ethnic Group', ‘African’, ‘Caribbean or Black’, and ‘Other Ethnic Group’ sections",
   "White: Other", "'White: Other' includes ‘White: Irish’, ‘White: Gypsy/Traveller’ and ‘White: Other White Ethnic Group’",
   "Asian", "'Asian' includes the categories Asian, Asian Scottish or Asian British",
-  "Other", "The 'Other' group includes Hindu, Buddhist, Pagan, Jewish, Sikh, and 'Another religion' responses"
+  "All other ethnic groups", "'All other ethnic groups' includes categories within the 'Mixed or Multiple Ethnic Group', ‘African’, ‘Caribbean or Black’, 'Roma', 'Showman/Showwoman' and ‘Other Ethnic Group’ sections",
+  "Other", "The 'Other' group includes Hindu, Buddhist, Pagan, Jewish, Sikh, and 'Another religion' responses",
+  "No", "'No' includes responses 'No' and those currently serving",
+  "Yes", "'Yes' includes responses 'Yes, previously served in regular Armed Forces' and 'Yes, previously served in reserve Armed Forces'"
 )
 
-notes_lookup$number <- paste0("[note ", 1:length(notes), "]")
+notes_lookup$number <- paste0("[note ", 1:length(notes_lookup$short), "]")
 
 
 ### 5 - Variable lookups - TO UPDATE ----
@@ -98,7 +108,7 @@ lookup_df <- data.frame(rbind(
   c("cobeu17", "Country of Birth", "Country of Birth"),
   c("ethSuperGroup", "Ethnic Group", "Ethnic Group"),
   c("religionB", "Religion", "Religion"),
-  c("sexIDg", "Sexual Orientation", "Sexual Orienation"),
+  c("sexIDg", "Sexual Orientation", "Sexual Orientation"),
   c("asg", "Respondent Age and Sex", "Age and Sex"),
   c("ageG", "Respondent Age", "Age"),
   c("marStatB", "Marital Status", "Marital Status"),
@@ -208,11 +218,11 @@ f_trans_factor <- function(x) {
     x == "outten5" ~ "Unknown rented",
     x == "CarAccess1" ~ "1 car",
     x == "CarAccess2" ~ "2 cars",
-    x == "CarAccess3" ~ "3 cars",
-    x == "CarAccess4" ~ "4 cars",
+    x == "CarAccess3" ~ "3 cars", 
+    x == "CarAccess4" ~ "No cars",
     x == "cobeu171" ~ "Scotland",
     x == "cobeu172" ~ "Rest of UK",
-    x == "cobeu173" ~ "Rest of EU",
+    x == "cobeu173" ~ "EU27",
     x == "cobeu174" ~ "Rest of World",
     x == "ethSuperGroup1" ~ "White: Scottish",
     x == "ethSuperGroup2" ~ "White: Other British",
