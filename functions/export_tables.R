@@ -32,7 +32,11 @@ export_tables <- function(data) {
   
   # create contents page
   contents_df <- data.frame(
-    "Sheet name" = paste0("=HYPERLINK(\"#'", c("Notes", tab.names.cleaned), "'!A1\", \"", c("Notes", tab.names.cleaned), "\")"),
+    "Sheet name" = paste0("=HYPERLINK(\"#'", 
+                          c("Notes", tab.names.cleaned), 
+                          "'!A1\", \"", 
+                          c("Notes", tab.names.cleaned), 
+                          "\")"),
     "Sheet title" = c("Notes", sheet.titles),
     check.names = FALSE
   )
@@ -81,7 +85,7 @@ export_tables <- function(data) {
       sources = c(
         rep(NA_character_, 3),
         rep(paste0("Scottish Household Survey, ", 
-                   "Scottish Health Survey, ",
+                   "Scottish Health Survey ",
                    "and Scottish Crime and Justice Survey"), length(data))
       ),
       tables = c(
@@ -99,8 +103,14 @@ export_tables <- function(data) {
   my_wb <- a11ytables::generate_workbook(my_a11ytable)
   
   # add link colour to content sheet
-  linkstyle <- openxlsx::createStyle(fontColour = "#0000EE", textDecoration = "underline")
-  openxlsx::addStyle(wb = my_wb, sheet = "Contents", style = linkstyle, rows = 4:(4+length(data)), cols = 1, stack = TRUE)
+  linkstyle <- openxlsx::createStyle(fontColour = "#0000EE", 
+                                     textDecoration = "underline")
+  openxlsx::addStyle(wb = my_wb, 
+                     sheet = "Contents", 
+                     style = linkstyle, 
+                     rows = 4:(4+length(data)), 
+                     cols = 1, 
+                     stack = TRUE)
   
   # add 'back to contents page' to each sheet
   for(i in 3:(3+length(data))){
