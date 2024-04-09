@@ -237,7 +237,7 @@ f_trans_factor <- function(x) {
     x == "religionB5" ~ "Muslim", 
     x == "religionB6" ~ "Other", 
     x == "sexIDg1" ~ "Heterosexual",
-    x == "sexIDg2" ~ "LGB & other",
+    x == "sexIDg2" ~ "LGB+",
     x == "marStatB1" ~ "Never married - single",
     x == "marStatB2" ~ "Married/Civil partnership",
     x == "marStatB3" ~ "Seperated",
