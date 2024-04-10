@@ -117,9 +117,9 @@ assignInNamespace(".get_start_row_table",
 
 my.insert_notes_statement <- function(wb, content, tab_title) {
   
-  has_notes <- .has_notes(content, tab_title)
+  #has_notes <- .has_notes(content, tab_title)
   
-  if (has_notes) {
+  #if (has_notes) {
     
    # text <-
    #   "This table contains notes, which can be found in the Notes worksheet."
@@ -132,7 +132,7 @@ my.insert_notes_statement <- function(wb, content, tab_title) {
    #   startRow = 3  # notes will always go in row 3 if they exist
    # )
     
-  }
+ # }
   
   return(wb)
   
