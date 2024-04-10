@@ -111,3 +111,35 @@ my.get_start_row_table <- function(
 assignInNamespace(".get_start_row_table", 
                   my.get_start_row_table, 
                   ns = "a11ytables")
+
+
+
+
+my.insert_notes_statement <- function(wb, content, tab_title) {
+  
+  has_notes <- .has_notes(content, tab_title)
+  
+  if (has_notes) {
+    
+   # text <-
+   #   "This table contains notes, which can be found in the Notes worksheet."
+    
+   # openxlsx::writeData(
+   #   wb = wb,
+   #   sheet = tab_title,
+   #   x = text,
+   #   startCol = 1,
+   #   startRow = 3  # notes will always go in row 3 if they exist
+   # )
+    
+  }
+  
+  return(wb)
+  
+}
+
+assignInNamespace(".insert_notes_statement", 
+                  my.insert_notes_statement, 
+                  ns = "a11ytables")
+
+

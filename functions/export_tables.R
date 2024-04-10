@@ -114,9 +114,11 @@ export_tables <- function(data) {
   
   # add 'back to contents page' to each sheet
   for(i in 3:(3+length(data))){
-  openxlsx::writeFormula(my_wb, sheet = i, 
+  openxlsx::writeFormula(my_wb, 
+                         sheet = i, 
                          x = "=HYPERLINK(\"#'Contents'!A1\", \"Back to Contents page\")", 
-                         startCol = 1, startRow = 3)
+                         startCol = 1, 
+                         startRow = 3)
   }
   
   # change width of first column in contents sheet
