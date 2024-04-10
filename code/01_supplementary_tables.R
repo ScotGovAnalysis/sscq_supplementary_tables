@@ -55,7 +55,7 @@ files <- files[grepl(paste(lookup_df$vname,
 length(files) == length(lookup_df$vname)
 
 # import CI files and clean for export
-ci_tables_list <- get_ci_data(files[30:31])
+ci_tables_list <- get_ci_data(files)
 
 # reorder list of CI data
 ci_tables_list <- ci_tables_list[lookup_df$vname]

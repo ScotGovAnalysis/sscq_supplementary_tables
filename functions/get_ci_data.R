@@ -42,6 +42,7 @@ get_ci_data <- function(paths){
     # loop through each list item
     ci_list <- list()
     col <- list()
+    n_list <- list()
     for (i in seq_along(mylist)){
       
       # split list item i into separate tables
@@ -212,6 +213,9 @@ get_ci_data <- function(paths){
       # transform column with number of observations to numeric
       df[[9]] <- as.numeric(df[[9]])
       
+      # extract number of observations of item i
+      df_n <- df %>% select(9)
+      
       df <- df %>%
         
         # suppress values which are based 5 or fewer observations
@@ -259,15 +263,73 @@ get_ci_data <- function(paths){
       # add unique columns of list item i to list
       # (%, upper CI and lower CI)
       ci_list <- c(ci_list, list(df[, (length(df)-2):length(df)]))
+      
+      # add number of observations of item i to list
+      n_list <- c(n_list, list(round(df_n, 0)))
     }
     
     # merge common columns and unique columns to data frame
     ci_tables <- do.call("cbind", list(col, ci_list))
     
+    # bind list into one data frame
+    n_tables <- bind_cols(n_list)
+    
     # reorder columns
     ci_tables <- ci_tables %>% 
       relocate(any_of(c("Weighted N", "Unweighted N")), .after = last_col()) 
     
+    
+    # Add disclosure control
+    
+    if(var != "swemwbs"){
+      # identify rows and columns which are based on <= 5 observations
+      to_be_suppressed <- which(n_tables <= 5, arr.ind = TRUE) %>% 
+        as.data.frame() %>% 
+        arrange(row)
+      
+      # loop through all rows with at least one n <= 5 to apply suppression
+      for(row_n in to_be_suppressed[,1]){
+        
+        # order columns by number of observations
+        order <- t(apply(n_tables[row_n, ], 1, order)) %>% as.data.frame()
+        
+        # identify second lowest n
+        s_lowest <- order[, 2]
+        
+        # reset counter
+        number_obs <- 0
+        
+        # loop through all columns in row
+        for(column in to_be_suppressed %>% 
+            filter(row == row_n) %>% 
+            pull()){
+          
+          # suppress column with n <= 5
+          ci_tables[row_n, (2+3*column-2):(2+3*column)] <- "*"
+          
+          # suppress column with second lowest n
+          ci_tables[row_n, (2+3*s_lowest-2):(2+3*s_lowest)] <- "*"
+          
+          # count n of suppressed columns
+          number_obs <- number_obs + n_tables[row_n, column]
+          
+          # if only one observation is <= 5, add second lowest to counter
+          if(to_be_suppressed %>% filter(row == row_n) %>% count(row) %>% select(n) == 1){
+            number_obs <- number_obs + n_tables[row_n, s_lowest]
+          }
+          
+        }
+       
+        # if counter is <= 5 (i.e., the total number of suppressed observations
+        # is still <5), then suppress additional column
+        if(number_obs <= 5){
+          add <- order[, which(order == column) + 1]
+          ci_tables[row_n, (2+3*add-2):(2+3*add)] <- "*"
+        }
+         
+      }
+    }
+
     # add data frame to list
     ci_tables_list <- c(ci_tables_list, list(ci_tables))
     
