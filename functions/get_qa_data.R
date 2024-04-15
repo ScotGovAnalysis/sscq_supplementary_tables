@@ -59,7 +59,11 @@ get_qa_data <- function(filepath) {
       mutate(category = gsub("\\*+","", category)) %>%
       
       # remove columns that include the word 'refused'
-      select(-contains("refused", ignore.case = TRUE))
+      select(-contains("refused", ignore.case = TRUE)) %>%
+      
+      # remove double spaces
+      mutate(varname = str_squish(varname),
+             category = str_squish(category))
     
     # remove unwanted * in variables 
     # (* was previously used for footnotes but is no longer needed)
