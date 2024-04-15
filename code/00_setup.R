@@ -21,7 +21,7 @@ sscq_year <- "2022"
 ### 2 - File name of supplementary tables - TO UPDATE ----
 
 # name of final file
-fname <- "supplementary_tables.xlsx"
+fname <- "supplementary_tables_amendment.xlsx"
 
 ### 3 - Cover sheet - TO UPDATE ----
 
@@ -327,6 +327,7 @@ library(sdcTable)
 library(a11ytables)
 library(data.table)
 library(odsconvertr)
+library(stringr)
 
 ### 9 - Load functions from functions folder of Rproject ----
 

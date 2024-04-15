@@ -207,8 +207,8 @@ get_ci_data <- function(paths){
                                                         length(cleaned_qa_list[[tolower(var)]]))], 
                   by = c("Variable" = "varname", "Category" = "category")) 
       
-      # transform . to 100.1 to avoid the introduction of NAs in next step
-      df[[9]] <- ifelse(df[[9]] == ".", 100.1, df[[9]])
+      # transform . to 999999.1 to avoid the introduction of NAs in next step
+      df[[9]] <- ifelse(df[[9]] == ".", 999999.1, df[[9]])
       
       # transform column with number of observations to numeric
       df[[9]] <- as.numeric(df[[9]])
@@ -220,11 +220,8 @@ get_ci_data <- function(paths){
         
         # suppress values which are based 5 or fewer observations
         mutate(across(c(5:7), \(x) ifelse(.[[9]] <= 5, "*", 
-                                          # re-transform 101.1 to .
-                                          ifelse(.[[9]] == 101.1, ".", x)))) %>%
-        
-        # delete response categories which include 'refused'
-        #filter(!str_detect(Category, regex('refused', ignore_case = T))) %>%
+                                          # re-transform 999999.1 to .
+                                          ifelse(.[[9]] == 999999.1, ".", x)))) %>%
         
         # select relevant columns
         select(c(1:3, 8, 4, 5:7))
@@ -291,6 +288,7 @@ get_ci_data <- function(paths){
       for(row_n in to_be_suppressed[,1]){
         
         # order columns by number of observations
+        # note: . are still coded 999999.1
         order <- t(apply(n_tables[row_n, ], 1, order)) %>% as.data.frame()
         
         # identify second lowest n
