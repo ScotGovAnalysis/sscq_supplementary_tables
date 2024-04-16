@@ -25,3 +25,6 @@ data/
 # R data files #
 *.[rR][dD][aA][tT][aA]
 *.[rR][dD][sS]
+
+# Ods data files #
+*.[oO][dD][sS]
