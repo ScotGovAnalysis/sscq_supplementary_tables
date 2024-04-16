@@ -124,7 +124,7 @@ export_tables <- function(data) {
   openxlsx::setColWidths(my_wb, 
                          sheet = "Contents", 
                          cols = 1, 
-                         widths = "auto")
+                         widths = 27)
 
   # open temp copy
   openxlsx::openXL(my_wb)
@@ -136,8 +136,6 @@ export_tables <- function(data) {
                          overwrite = TRUE)
   
   # convert to ods
-  # Warning: The first column of the TOC gets removed in this step
-  # For now, manually convert xlsx file to ods!
   convert_to_ods(paste0(export.path,
                         fname))
 }
