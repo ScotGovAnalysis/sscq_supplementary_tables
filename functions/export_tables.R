@@ -30,17 +30,11 @@ export_tables <- function(data) {
   
   ### 3 - Contents sheet ----
   
-  # create contents page
   contents_df <- data.frame(
-    "Sheet name" = paste0("=HYPERLINK(\"#'", 
-                          c("Notes", tab.names.cleaned), 
-                          "'!A1\", \"", 
-                          c("Notes", tab.names.cleaned), 
-                          "\")"),
-    "Sheet title" = c("Notes", sheet.titles),
-    check.names = FALSE
-  )
-  class(contents_df$`Sheet name`) <- 'formula'
+      "Sheet name" = c("Notes", tab.names.cleaned),
+      "Sheet title" = c("Notes", sheet.titles),
+     check.names = FALSE
+     )
   
   ### 4 - Notes ----
   
@@ -80,7 +74,7 @@ export_tables <- function(data) {
       ),
       custom_rows = c(
         rep(list(NA_character_), 2),
-        rep(list(" "), length(data)+1)
+        rep(list("Back to Contents page"), length(data)+1)
       ),
       sources = c(
         rep(NA_character_, 3),
@@ -102,27 +96,34 @@ export_tables <- function(data) {
   
   my_wb <- a11ytables::generate_workbook(my_a11ytable)
   
-  # add link colour to content sheet
-  linkstyle <- openxlsx::createStyle(fontColour = "#0000EE", 
-                                     textDecoration = "underline")
-  openxlsx::addStyle(wb = my_wb, 
-                     sheet = "Contents", 
-                     style = linkstyle, 
-                     rows = 4:(4+length(data)), 
-                     cols = 1, 
-                     stack = TRUE)
-  
-  # add 'back to contents page' to each sheet
-  for(i in 3:(3+length(data))){
-  openxlsx::writeFormula(my_wb, 
-                         sheet = i, 
-                         x = "=HYPERLINK(\"#'Contents'!A1\", \"Back to Contents page\")", 
-                         startCol = 1, 
-                         startRow = 3)
+
+  # add hyperlinks
+  for(i in 1:(1+length(data))){
+    
+    # add 'back to contents page' to each sheet
+    openxlsx::writeFormula(my_wb, 
+                           sheet = 2+i, 
+                           x = "=HYPERLINK(\"#'Contents'!A1\", \"Back to Contents page\")", 
+                           startCol = 1, 
+                           startRow = 3)
+    
+    # add hyperlink to TOC
+    openxlsx::writeFormula(my_wb, 
+                           sheet = 2, 
+                           x =  paste0("=HYPERLINK(\"#'", 
+                                       sheet_names[i], 
+                                       "'!A1\", \"", 
+                                       sheet_names[i], 
+                                       "\")"), 
+                           startCol = 1, 
+                           startRow = 3+i)
   }
   
   # change width of first column in contents sheet
-  openxlsx::setColWidths(my_wb, sheet = "Contents", cols = 1, widths = "auto")
+  openxlsx::setColWidths(my_wb, 
+                         sheet = "Contents", 
+                         cols = 1, 
+                         widths = "auto")
 
   # open temp copy
   openxlsx::openXL(my_wb)
@@ -133,6 +134,9 @@ export_tables <- function(data) {
                                        fname),
                          overwrite = TRUE)
   
+  # convert to ods
+  # Warning: The first column of the TOC gets removed in this step
+  # For now, manually convert xlsx file to ods!
   convert_to_ods(paste0(export.path,
                         fname))
 }
