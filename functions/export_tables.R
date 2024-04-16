@@ -98,6 +98,7 @@ export_tables <- function(data) {
   
 
   # add hyperlinks
+  sheet_names <- c("Notes", tab.names.cleaned)
   for(i in 1:(1+length(data))){
     
     # add 'back to contents page' to each sheet
