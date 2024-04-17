@@ -124,7 +124,7 @@ export_tables <- function(data) {
   openxlsx::setColWidths(my_wb, 
                          sheet = "Contents", 
                          cols = 1, 
-                         widths = 27)
+                         widths = 28)
 
   # open temp copy
   openxlsx::openXL(my_wb)

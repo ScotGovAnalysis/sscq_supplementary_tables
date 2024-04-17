@@ -13,6 +13,9 @@
 
 get_qa_data <- function(filepath) {
   
+  # add message to inform user about progress
+  message("Importing QA data")
+  
   path <- filepath
   
   # get names of Excel sheets
@@ -20,7 +23,8 @@ get_qa_data <- function(filepath) {
   
   # import all sheets and add to list
   qa.list <- lapply(excel_sheets(path), read_excel, 
-                    path = path, skip = 3, col_names = TRUE)
+                    path = path, skip = 3, col_names = TRUE,
+                    .name_repair = "unique_quiet")
   
   # clean list names
   names(qa.list) <- gsub("^.*\\- ","", sheetnames.qa)
@@ -33,6 +37,11 @@ get_qa_data <- function(filepath) {
   cleaned.qa.list <- list()
   for (c in seq_along(qa.list)) {
     
+    # add message to inform user about progress
+    message(paste0("Preparing data for ", 
+                   names(qa.list)[c]))
+    
+    # get item c in list
     cleaned_df <- qa.list[[c]]
     
     cleaned_df <- cleaned_df %>% 

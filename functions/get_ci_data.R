@@ -21,12 +21,17 @@ get_ci_data <- function(paths){
     # get path of one file
     path <- paths[a]
     
+    # add message to inform user about progress
+    message(paste0("Importing data for ", 
+                   word(excel_sheets(path), 1)[1]))
+    
     # get sheet names
     sheetnames <- excel_sheets(path)[-1]
     
     # import all but the first sheet of filename a and add to list
     mylist <- lapply(excel_sheets(path)[-1], read_excel, 
-                     path = path, skip = 10, col_names = FALSE)
+                     path = path, skip = 10, col_names = FALSE,
+                     .name_repair = "unique_quiet")
     
     # different code for continuous variables
     if(all(excel_sheets(path) == "swemwbs")){
@@ -44,6 +49,10 @@ get_ci_data <- function(paths){
     col <- list()
     n_list <- list()
     for (i in seq_along(mylist)){
+      
+      # add message to inform user about progress
+      message(paste0("  Preparing data for ", 
+                     names(mylist)[i]))
       
       # split list item i into separate tables
       # (SAS unhelpfully outputs multiple tables to a 
