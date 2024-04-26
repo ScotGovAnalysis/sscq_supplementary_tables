@@ -67,6 +67,7 @@ notes_lookup <- tibble::tribble(
   "Asian", "'Asian' includes the categories Asian, Asian Scottish or Asian British",
   "All other ethnic groups", "'All other ethnic groups' includes categories within the 'Mixed or Multiple Ethnic Group', ‘African’, ‘Caribbean or Black’, 'Roma', 'Showman/Showwoman' and ‘Other Ethnic Group’ sections",
   "Other", "The 'Other' group includes Hindu, Buddhist, Pagan, Jewish, Sikh, and 'Another religion' responses",
+  "LGB+", "'LGB+' was called 'LGB & other' in previous publications",
   "No", "'No' includes responses 'No' and those currently serving",
   "Yes", "'Yes' includes responses 'Yes, previously served in regular Armed Forces' and 'Yes, previously served in reserve Armed Forces'"
 )
@@ -328,6 +329,7 @@ library(a11ytables)
 library(data.table)
 library(odsconvertr)
 library(stringr)
+library(pbapply)
 
 ### 9 - Load functions from functions folder of Rproject ----
 
