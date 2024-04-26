@@ -22,7 +22,7 @@ get_qa_data <- function(filepath) {
   sheetnames.qa <- excel_sheets(path)
   
   # import all sheets and add to list
-  qa.list <- lapply(excel_sheets(path), read_excel, 
+  qa.list <- pblapply(excel_sheets(path), read_excel, 
                     path = path, skip = 3, col_names = TRUE,
                     .name_repair = "unique_quiet")
   

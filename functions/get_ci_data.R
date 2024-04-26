@@ -25,19 +25,26 @@ get_ci_data <- function(paths){
     message(paste0("Importing data for ", 
                    word(excel_sheets(path), 1)[1]))
     
+    if(all(excel_sheets(path) != "swemwbs")){
     # get sheet names
     sheetnames <- excel_sheets(path)[-1]
     
     # import all but the first sheet of filename a and add to list
-    mylist <- lapply(excel_sheets(path)[-1], read_excel, 
-                     path = path, skip = 10, col_names = FALSE,
+    mylist <- pblapply(excel_sheets(path)[-1], read_excel, 
+                     path = path, col_names = FALSE,
                      .name_repair = "unique_quiet")
+    }
     
     # different code for continuous variables
     if(all(excel_sheets(path) == "swemwbs")){
+      
+      # get sheet names
       sheetnames <- "swemwbs"
-      mylist <- lapply(excel_sheets(path), read_excel, 
-                       path = path, skip = 8, col_names = FALSE)
+      
+      # import sheet of filename a and add to list
+      mylist <- pblapply(excel_sheets(path), read_excel, 
+                       path = path, col_names = FALSE,
+                       .name_repair = "unique_quiet")
       
     }
     
@@ -62,6 +69,9 @@ get_ci_data <- function(paths){
       
       # remove tibbles with only one row
       split_table <- split_table[purrr::map_lgl(split_table, ~ nrow(.) != 1)]
+      
+      # remove first list item (table with data summary)
+      split_table <- split_table[-1]
       
       # remove labels column for continuous variables
       if(split_table[[1]][2,2] == "Label"){
@@ -270,15 +280,19 @@ get_ci_data <- function(paths){
       # (%, upper CI and lower CI)
       ci_list <- c(ci_list, list(df[, (length(df)-2):length(df)]))
       
+      if(var != "swemwbs"){
       # add number of observations of item i to list
       n_list <- c(n_list, list(round(df_n, 0)))
+      }
     }
     
     # merge common columns and unique columns to data frame
     ci_tables <- do.call("cbind", list(col, ci_list))
     
+    if(var != "swemwbs"){
     # bind list into one data frame
     n_tables <- bind_cols(n_list)
+    }
     
     # reorder columns
     ci_tables <- ci_tables %>% 

@@ -52,7 +52,10 @@ files <- files[grepl(paste(lookup_df$vname,
                      tolower(files))]
 
 # check all required files are present in CI folder
-length(files) == length(lookup_df$vname)
+{
+  if (length(files) != length(lookup_df$vname))
+  {stop("Some CI sheets are missing. Check CI folder with SAS output.")}
+}
 
 # import CI files and clean for export
 ci_tables_list <- get_ci_data(files)
