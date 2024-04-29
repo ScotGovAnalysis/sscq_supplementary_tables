@@ -15,9 +15,6 @@
 # Publication date
 pub_date <- "30 April 2024"
 
-# Year the published data is from
-sscq_year <- "2022"
-
 ### 2 - File name of supplementary tables - TO UPDATE ----
 
 # name of final file
@@ -285,7 +282,7 @@ f_trans_factor <- function(x) {
     x == "swemwbs" ~ "Average Wellbeing (/35)"
   )
 }
-### 7 - Required variables - TO UPDATE ----
+### 7 - Breakdowns - TO UPDATE ----
 
 # Variable names (=levels) and labels of variables to be 
 # included in each sheet (as rows).
